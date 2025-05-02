@@ -1,22 +1,33 @@
-import requests 
+import requests
 import json
 
 
 def sentiment_analyzer(text_to_analyse):
-    # URL of the sentiment analysis service
+    # Define the URL for the sentiment analysis API
     url = "https://sn-watson-sentiment-bert.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/SentimentPredict"
-    # Constructing the request payload in the expected format
+
+    # Create the payload with the text to be analyzed
     myobj = {"raw_document": {"text": text_to_analyse}}
-    # Custom header specifying the model ID for the sentiment analysis service
+
+    # Set the headers with the required model ID for the API
     header = {
         "grpc-metadata-mm-model-id": "sentiment_aggregated-bert-workflow_lang_multi_stock"
     }
-    # Sending a POST request to the sentiment analysis API
+
+    # Make a POST request to the API with the payload and headers
     response = requests.post(url, json=myobj, headers=header)
-    # Parsing the JSON response from the API
+
+    # Parse the response from the API
     formatted_response = json.loads(response.text)
-    # Extracting sentiment label and score from the response
-    label = formatted_response["documentSentiment"]["label"]
-    score = formatted_response["documentSentiment"]["score"]
-    # Returning a dictionary containing sentiment analysis results
+
+    # If the response status code is 200, extract the label and score from the response
+    if response.status_code == 200:
+        label = formatted_response["documentSentiment"]["label"]
+        score = formatted_response["documentSentiment"]["score"]
+    # If the response status code is 500, set label and score to None
+    elif response.status_code == 500:
+        label = None
+        score = None
+
+    # Return the label and score in a dictionary
     return {"label": label, "score": score}

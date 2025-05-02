@@ -4,7 +4,6 @@
 '''
 # Import Flask, render_template, request from the flask pramework package : TODO
 # Import the sentiment_analyzer function from the package created: TODO
-import json
 from flask import Flask, render_template, request 
 from SentimentAnalysis.sentiment_analyzer import sentiment_analyzer
 # Initiate the flask app : TODO
@@ -24,10 +23,14 @@ def sent_analyzer():
     label = response["label"]
     score = response["score"]
 
-    # Return a formatted string with the sentiment label and score
-    return "The given text has been identified as {} with a score of {}.".format(
-        label.split("_")[1], score
-    )
+    # Check if the label is None, indicating an error or invalid input
+    if label is None:
+        return "Invalid input! Try again."
+    else:
+        # Return a formatted string with the sentiment label and score
+        return "The given text has been identified as {} with a score of {}.".format(
+            label.split("_")[1], score
+        )
 
 
 @app.route("/")
